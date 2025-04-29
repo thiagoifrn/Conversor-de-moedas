@@ -1,0 +1,43 @@
+<div class="exchange-container">
+  <h2 class="exchange-title">Exchange</h2>
+
+  <div class="converter-card">
+    <h3>Conversor de moedas</h3>
+    <p>Digite o valor e escolha as moedas de conversão</p>
+
+    <div class="input-group to">
+      <input
+        type="number"
+        [(ngModel)]="amount"
+        (input)="onValueChange()"
+        class="amount-input"
+        placeholder="R$ 1.000,00"
+      />
+
+      <select [(ngModel)]="fromCurrency" (change)="convertCurrency()">
+        <option *ngFor="let currency of currencies" [value]="currency.code">
+          {{ getFlagEmoji(currency.code) }} {{ currency.code }}
+        </option>
+      </select>
+    </div>
+
+    <button type="button" class="invert-button" (click)="invertCurrencies()">
+      ⇅
+    </button>
+
+    <div class="input-group to">
+      <input
+        type="text"
+        [value]="result | number : '1.2-2'"
+        readonly
+        class="amount-input"
+      />
+
+      <select [(ngModel)]="toCurrency" (change)="convertCurrency()">
+        <option *ngFor="let currency of currencies" [value]="currency.code">
+          {{ getFlagEmoji(currency.code) }} {{ currency.code }}
+        </option>
+      </select>
+    </div>
+  </div>
+</div>
