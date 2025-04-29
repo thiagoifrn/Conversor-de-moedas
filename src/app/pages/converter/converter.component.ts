@@ -1,64 +1,34 @@
+import { Component, OnInit } from '@angular/core';
+import { ConverterConsumer } from './converter.consumer';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CurrencyService } from '../../core/services/currency.service';
+import { currencyToFlagMap } from '../../shared/currency-to-flag';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-converter',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgSelectModule],
+  providers: [ConverterConsumer],
   templateUrl: './converter.component.html',
   styleUrls: ['./converter.component.scss'],
 })
-export class ConverterComponent {
-  currencies = [
-    { code: 'USD' },
-    { code: 'EUR' },
-    { code: 'BRL' },
-    { code: 'GBP' },
-    { code: 'CHF' },
-  ];
+export class ConverterComponent implements OnInit {
+  constructor(public consumer: ConverterConsumer) {}
 
-  amount: number = 1000;
-  fromCurrency: string = 'BRL';
-  toCurrency: string = 'USD';
-  result: number = 0;
-
-  constructor(private currencyService: CurrencyService) {}
-
-  ngOnInit() {
-    this.convertCurrency();
+  ngOnInit(): void {
+    this.state.loadCurrencies();
   }
 
-  getFlagEmoji(code: string): string {
-    return String.fromCodePoint(
-      ...[...code.slice(0, 2).toUpperCase()].map(
-        (c) => 127397 + c.charCodeAt(0)
-      )
+  get state() {
+    return this.consumer.state;
+  }
+
+  getFlagEmoji(currencyCode: string): string {
+    const countryCode =
+      currencyToFlagMap[currencyCode] || currencyCode.slice(0, 2);
+    return countryCode.replace(/./g, (char) =>
+      String.fromCodePoint(127397 + char.charCodeAt(0))
     );
-  }
-
-  convertCurrency() {
-    this.currencyService
-      .getExchangeRates(this.fromCurrency, [this.toCurrency])
-      .subscribe((data) => {
-        const key = this.fromCurrency + this.toCurrency;
-        const rate = data.quotes?.[key];
-
-        if (rate) {
-          this.result = this.amount * rate;
-        } else {
-          this.result = 0; // fallback caso não encontre a taxa
-        }
-      });
-  }
-
-  onValueChange() {
-    this.convertCurrency();
-  }
-
-  invertCurrencies() {
-    [this.fromCurrency, this.toCurrency] = [this.toCurrency, this.fromCurrency];
-    this.convertCurrency();
   }
 }
