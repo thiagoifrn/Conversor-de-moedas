@@ -1,18 +1,27 @@
+// scripts/replace-env.js
 const fs = require("fs");
-const path = "./src/environments/environment.prod.ts";
+const path = require("path");
+require("dotenv").config();
 
-const currencyApiKey = process.env.NG_APP_CURRENCY_API_KEY || "";
-const currencyApiKey2 = process.env.NG_APP_CURRENCY_API_KEY2 || "";
+const envPath = path.resolve(__dirname, "../src/environments");
 
-const content = `
-export const environment = {
-  production: true,
-  currencyApiKey: '${currencyApiKey}',
-  currencyApiKey2: '${currencyApiKey2}',
+const envContent = `export const environment = {
+  production: false,
+  currencyApiKey: '${process.env.NG_APP_CURRENCY_API_KEY}',
+  currencyApiKey2: '${process.env.NG_APP_CURRENCY_API_KEY2}',
 };
 `;
 
-fs.writeFileSync(path, content);
+const prodEnvContent = `export const environment = {
+  production: true,
+  currencyApiKey: '${process.env.NG_APP_CURRENCY_API_KEY}',
+  currencyApiKey2: '${process.env.NG_APP_CURRENCY_API_KEY2}',
+};
+`;
+
+fs.writeFileSync(path.join(envPath, "environment.ts"), envContent);
+fs.writeFileSync(path.join(envPath, "environment.prod.ts"), prodEnvContent);
+
 console.log(
-  "✔ environment.prod.ts gerado com variáveis de ambiente do Netlify."
+  "✔ Arquivos environment.ts e environment.prod.ts gerados com sucesso."
 );

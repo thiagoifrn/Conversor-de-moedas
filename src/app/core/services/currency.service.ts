@@ -2,8 +2,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ApiResponse, SymbolsResponse } from '../../shared/types';
 import { environment } from '../../../environments/environment';
-import { ApiResponse, Currency, SymbolsResponse } from '../../shared/types';
 
 @Injectable({
   providedIn: 'root',
@@ -32,15 +32,19 @@ export class CurrencyService {
         }
 
         const key = this.apiKeys[index++];
-        requestFn(key).subscribe({
-          next: (value) => subscriber.next(value),
-          complete: () => subscriber.complete(),
+        requestFn(key!).subscribe({
+          next: (value) => {
+            subscriber.next(value);
+            subscriber.complete();
+          },
           error: (err) => {
-            if (err.status === 104) {
-              console.error('Limite excedido, tenta a próxima chave');
+            if (err?.status === 429 || err?.error?.message?.includes('quota')) {
+              console.warn(
+                `Chave falhou por limite, tentando próxima...`
+              );
               tryNext();
             } else {
-              console.error('Outro erro, não adianta tentar outra chave');
+              console.error('Erro não relacionado a limite:', err);
               subscriber.error(err);
             }
           },
@@ -52,6 +56,7 @@ export class CurrencyService {
   }
 
   getExchangeRates(base: string, symbols: string[]): Observable<ApiResponse> {
+    console.log(this.apiKeys);
     const symbolsParam = symbols.join(',');
     const url = `${this.baseUrl}/latest?base=${base}&symbols=${symbolsParam}`;
 
