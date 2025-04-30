@@ -39,9 +39,7 @@ export class CurrencyService {
           },
           error: (err) => {
             if (err?.status === 429 || err?.error?.message?.includes('quota')) {
-              console.warn(
-                `Chave falhou por limite, tentando próxima...`
-              );
+              console.warn(`Chave falhou por limite, tentando próxima...`);
               tryNext();
             } else {
               console.error('Erro não relacionado a limite:', err);
@@ -56,7 +54,6 @@ export class CurrencyService {
   }
 
   getExchangeRates(base: string, symbols: string[]): Observable<ApiResponse> {
-    console.log(this.apiKeys);
     const symbolsParam = symbols.join(',');
     const url = `${this.baseUrl}/latest?base=${base}&symbols=${symbolsParam}`;
 
