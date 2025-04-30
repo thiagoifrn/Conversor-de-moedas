@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
-  currencyApiKey: '',
+  //use uma ou mais chaves aqui
+  currencyApiKey: '', //
   currencyApiKey2: '',
 };
