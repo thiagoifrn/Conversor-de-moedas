@@ -3,12 +3,11 @@ import { ConverterConsumer } from './converter.consumer';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { currencyToFlagMap } from '../../shared/currency-to-flag';
-import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-converter',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgSelectModule],
+  imports: [CommonModule, FormsModule],
   providers: [ConverterConsumer],
   templateUrl: './converter.component.html',
   styleUrls: ['./converter.component.scss'],
