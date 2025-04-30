@@ -19,3 +19,12 @@ export type Currency = {
   code: string;
   description: string;
 };
+
+export type ConverterStateModel = {
+  amount: number;
+  fromCurrency: string;
+  toCurrency: string;
+  result: number;
+  currencies: { code: string }[];
+  isLoading: boolean;
+};
